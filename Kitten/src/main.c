@@ -1,49 +1,50 @@
 #include "mainBot.h"
 
-int main()
+void error(char * errorMessage)
 {
-    int socketDesc;
-    char *hostname = HOSTNAME;
-    char ipAddr[100];
-    struct hostent *hostCreds;
-    struct in_addr **addrList;
-    struct sockaddr_in server;
-    int i;
+    perror(errorMessage);
+    exit(1);
+}
 
-    if ((hostCreds = gethostbyname(hostname)) == NULL)
+int main(int argc, char * argv[])
+{
+    int sockFeed;
+    int server;
+    //int portNum;
+    //int clientSize;
+    char bufferIn[255];
+    struct addrinfo hints;
+
+    hints.ai_family = AF_UNSPEC;
+    hints.ai_socktype = 0;
+    hints.ai_protocol = 0;   
+    hints.ai_flags = 0; 
+
+    if (argc != 3)
     {
-        printf("Unable to resolve hostname\n");
+        printf("Correct use is: SERVER_NAME PORT_NUMBER\n");
+        exit(1);
+    }
+
+    
+
+    if ((sockFeed = socket(AF_INET, SOCK_STREAM, 0)) < 0)
+    {
+        printf("Unable to create Socket.\n");
         exit(0);
     }
 
-    addrList = (struct in_addr **) hostCreds->h_addr_list;
-
-    for(i = 0; addrList[i] != NULL; i++)
+    if (connect(sockFeed, server, sizeof(server)) < 0)
     {
-        strcpy(ipAddr, inet_ntoa(*addrList[i]));
-    }
-
-    printf("Host resolved to: %s\n", ipAddr);
-
-    socketDesc = socket(AF_INET, SOCK_STREAM, 0);
-    if (socketDesc == -1)
-    {
-        printf("You done fucked up bro");
-        exit(0);
-    }
-    server.sin_addr.s_addr = inet_addr(ipAddr);
-    server.sin_family = AF_INET;
-    server.sin_port = htons(6667);
-
-    if(connect(socketDesc, (struct sockaddr *)&server, sizeof(server)) < 0)
-    {
-        puts("Connect error");
+        printf("Connection Failed.\n");
         exit(0);
     }
     else
     {
-        puts("Connected");
-    }
-    close(socketDesc);
+        printf("Dude, you did it!  Yay!  Fuck teh police!\n");
+    }    
+
+    memset(&bufferIn, 0, sizeof(bufferIn));
+
     return 0;
 }
