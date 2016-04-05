@@ -1,7 +1,9 @@
 '''
-This bot needs a name, I'm going to go take suggestions
+I hereby christen thee,
 
-Sweet Auntie Lilly
+Chippy!
+
+Clicker of Cookies.
 '''
 
 from pymouse import PyMouse
