@@ -1,0 +1,10 @@
+CREATING A CLIENT.
+1. Create a socket using;
+	Server Address, IP address specifically.
+	Port Number.
+
+2. Connect Socket to host Socket using connect()
+
+3. Read and write.
+
+4. Disconnect, closing connection and closing socket.
