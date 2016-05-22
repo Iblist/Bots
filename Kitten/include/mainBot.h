@@ -9,8 +9,11 @@
 #include <string.h>
 #include <arpa/inet.h>
 #include <unistd.h>
+#include <time.h>
 
 #define HOSTNAME "irc.hackthissite.org"
 #define BOTNAME "Kitten" /*...Yes*/
+
+char ** splitString(char*);
 
 #endif //MAINBOT_H

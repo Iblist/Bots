@@ -1,0 +1,15 @@
+Things this bot needs to do before a 'release' build.
+
+One: Allow multiple modes, chosen with command arguments.
+Two: Allow custom strings in a .txt file in the assets folder. That might be trickyish.
+Three: Cleaner recording of what comes from the server. (It's a mess right now)
+Four: Verbose mode, some people like that mess I guess?
+Five: Allow user to choose target channel OR
+Six: Let bot choose channel at random from the channel list. (maybe LIST command?)
+Seven: Allow user to set bots name with command line argument (something like -n "botname")
+
+Stretch goal: 
+One: Let's do some motha fuckin machine learning. Ima make a chat bot.
+Two: Implement "meowspeak". The bot should take input string from a user in a channel and parrot it in "meowspeak". Basically adding nyas and stuff.
+
+Potentially impossible goal: Swear less. I'll give it a fuckin shot.
