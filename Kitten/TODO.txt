@@ -1,12 +1,17 @@
 Things this bot needs to do before a 'release' build.
 
-One: Allow multiple modes, chosen with command arguments.
-Two: Allow custom strings in a .txt file in the assets folder. That might be trickyish.
-Three: Cleaner recording of what comes from the server. (It's a mess right now)
-Four: Verbose mode, some people like that mess I guess?
-Five: Allow user to choose target channel OR
-Six: Let bot choose channel at random from the channel list. (maybe LIST command?)
-Seven: Allow user to set bots name with command line argument (something like -n "botname")
+Priority: Clean up main, shit's gonna get messy if you don't do that before implementing ping responses.
+Priority: Get bot responding to pings from user.
+
+Should cleanup the way parsing is done, should use functions and structs.
+Might be beneficial to #define reused string templates, reduce clutter.
+Allow multiple modes, chosen with command arguments.
+Allow custom strings in a .txt file in the assets folder. That might be trickyish.
+Cleaner recording of what comes from the server. (It's a mess right now)
+Verbose mode, some people like that mess I guess?
+Allow user to choose target channel OR
+Let bot choose channel at random from the channel list. (maybe LIST command?)
+Allow user to set bots name with command line argument (something like -n "botname")
 
 Stretch goal: 
 One: Let's do some motha fuckin machine learning. Ima make a chat bot.

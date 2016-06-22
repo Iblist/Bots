@@ -10,10 +10,7 @@
 #include <arpa/inet.h>
 #include <unistd.h>
 #include <time.h>
-
-#define HOSTNAME "irc.hackthissite.org"
-#define BOTNAME "Kitten" /*...Yes*/
-
-char ** splitString(char*);
+#include "parsing.h"
+#include "botAssets.h"
 
 #endif //MAINBOT_H
