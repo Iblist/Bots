@@ -13,10 +13,12 @@ typedef struct SettingsForBot{
 	char * passResp;
 	char * pongResp;
 	int recordFlag;
+	int inServer;
 	int inChannel;
 	
 } Bot;
 
 Bot * createBot(int, char**);
+int checkBotState(Bot*, char*);
 
 #endif

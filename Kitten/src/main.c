@@ -1,11 +1,5 @@
 #include "mainBot.h"
 
-/*****************
-It should be noted!
-argv[1] should be irc.hackthissite.org
-argv[2] should be 7000
-******************/
-
 void error(char * errorMessage)
 {
     perror(errorMessage);
@@ -19,13 +13,14 @@ int main(int argc, char * argv[])
 	int count = 0;
 	int i = 0;
 	int j = 0;
+	int stateChange = 0;
 	struct addrinfo *result;
     char bufferIn[255];
 	FILE * logFile;
 	char ** stringList = NULL;
 	char *pongResp = NULL;
-	char deleteMeIdiot[] = "TIME IAmAPenguin\r\n";
 	char * name;
+	char * timestamp;
 	Bot * settings;
 
 	for (i = 0; i < argc; i++)
@@ -59,7 +54,7 @@ int main(int argc, char * argv[])
 		exit(1);
 	}
 
-    if ((sockFeed = socket(AF_INET, SOCK_STREAM, 0)) < 0)
+    if ((sockFeed = socket(result->ai_family, result->ai_socktype, result->ai_protocol)) < 0)
     {
         fprintf(stderr, "Unable to create Socket.\n");
         exit(0);
@@ -80,10 +75,9 @@ int main(int argc, char * argv[])
 	sleep(1);
 
 	/*Join server, wait a moment, continue.*/
-	write(sockFeed, settings->joinMsg, strlen(settings->joinMsg));
+	/*write(sockFeed, settings->joinMsg, strlen(settings->joinMsg));
 	sleep(1);
-	settings->inChannel = 1;
-	write(sockFeed, deleteMeIdiot, strlen(deleteMeIdiot)); //DELETE THIS
+	settings->inChannel = 1;*/
 	
 
 	/*This needs to be in it's own function
@@ -96,42 +90,47 @@ int main(int argc, char * argv[])
 		{
 			for (j = 0; stringList[j] != NULL; j++)
 			{
+				stateChange = 0;
+				stateChange = checkBotState(settings, stringList[j]);
 				name = getSourceName(stringList[j]);
-				for(i = 0; i < strlen(stringList[j]); i++)
+				timestamp = getTimestamp(stringList[j]);
+				pongResp = serverPingCheck(stringList[j]);
+
+				if (stateChange == 1 && settings->inServer == 1 && settings->inChannel == 0)
 				{
-					/*If PING shows up in this form, it is a ping from the server.
-					  The second Byte is changed to O, and the ping string is sent back.
- 					  This is a quick and dirty way of responding to pings from the server*/
-					if (strncmp(&stringList[j][i], "PING :", 6)==0)
-					{
-						stringList[j][i+1] = 'O';
-						pongResp = malloc(strlen(&stringList[j][i])+2);
-						strcpy(pongResp, &stringList[j][i]);
-						strcat(pongResp, "\r\n");
-						write(sockFeed, pongResp, strlen(pongResp));
-						puts(pongResp);
-						sleep(1);
-						/*write(sockFeed, pongMessage, strlen(pongMessage));Removed for now*/
-						if (settings->inChannel == 0)
-						{
-							write(sockFeed, settings->joinMsg, strlen(settings->joinMsg));
-							settings->inChannel = 1;
-						}
-						if (pongResp != NULL)
-						{
-							free(pongResp);
-							pongResp = NULL;
-						}
-					}
-					
-					if (strncmp(&stringList[j][i], 
+					write(sockFeed, settings->joinMsg, strlen(settings->joinMsg));
 				}
+
+				if (pongResp != NULL)
+				{
+					write(sockFeed, pongResp, strlen(pongResp));
+					puts(pongResp);
+					free(pongResp);
+					pongResp = NULL;
+				}
+
+				pongResp = createPingResp(name, timestamp);
+				if (pongResp != NULL)
+				{
+					write(sockFeed, pongResp, strlen(pongResp));
+					puts(pongResp);
+					free(pongResp);
+					pongResp = NULL;
+				}
+
+				/*Free string list for next round*/
 				if (stringList[j] != NULL)
 				{
 					free(stringList[j]);
 					stringList[j] = NULL;
 				}
+				if (name != NULL)
+				{
+					free(name);
+					name = NULL;
+				}
 			}
+			/*Write buffer to a log file, this will be optional at some point*/
 			fputs(bufferIn, logFile);
 			fputs("\n", logFile);
 			fflush(logFile);

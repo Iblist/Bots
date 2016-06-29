@@ -11,5 +11,8 @@ char * cleanMessage(char*);
 void helpMessage();
 int setMsg();
 char * getSourceName(char * input);
+char * serverPingCheck(char * input);
+char * createPingResp(char * name, char * timestamp);
+char * getTimestamp(char * input);
 
 #endif //PARSING_H

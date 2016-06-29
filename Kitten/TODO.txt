@@ -1,7 +1,18 @@
 Things this bot needs to do before a 'release' build.
 
-Priority: Clean up main, shit's gonna get messy if you don't do that before implementing ping responses.
-Priority: Get bot responding to pings from user.
+Priority: Move bot config to a file in assets folder. Doing it by command line is dumb with the number of settings I'm doing/it's more convenient.
+
+Low Priority: Clean up main. It looks alright, but could be better.
+Low Priority: Clean up how bot responds to pings from users. Right now it'll probably just respond to every ping senty to everyone from anyone
+              So it should check the ping is actually meant for it.
+Low Priority: So there's this function strstr(char * haystack, char * needle). There are a whole bunch of places where using this function would
+              be better than the for loops I've been using, so those instances need to be cleaned up. I can do it later, though.
+
+Under Observation: Bot recognizes when it has;
+		           Successfully joined a server
+                   Successfully authenticated with a server.
+                   Successfully joined a channel.
+                   I'm not sure if my solution is air tight yet, but the current system seems to work.
 
 Should cleanup the way parsing is done, should use functions and structs.
 Might be beneficial to #define reused string templates, reduce clutter.

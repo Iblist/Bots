@@ -22,6 +22,7 @@ Bot * createBot(int argc, char * argv[])
 	if (tempBot != NULL)
 	{
 		tempBot->inChannel = 0;
+		tempBot->inServer = 0;
 		tempBot->quitMsg = strdup("QUIT :Tah Tah for now \r\n");
 		tempBot->passResp = strdup("PASS DoobyDoo\r\n");
 
@@ -60,4 +61,33 @@ Bot * createBot(int argc, char * argv[])
 		}
 	}
 	return tempBot;
+}
+
+/*Error codes:
+  0 = Bot State unchanged
+  1 = Bot State changed
+*/
+int checkBotState(Bot * botState, char * inString)
+{
+	int status = 0;
+	
+	if(botState->inServer == 0)
+	{
+		if(strstr(inString, "/MOTD") != NULL)
+		{
+			botState->inServer = 1;
+			status = 1;
+		}
+	}
+	
+	if (botState->inChannel == 0)
+	{
+		if(strstr(inString, "NAMES") != NULL)
+		{
+			botState->inChannel = 1;
+			status = 1;
+		}
+	}
+
+	return status;
 }

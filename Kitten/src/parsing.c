@@ -9,9 +9,6 @@
   '\r', cuts everything up until that out and assigns it to it's own strign in the list.
   The last entry in the list is NULL so the list can safely be looped through by looking
   for NULL.
-
-  NOTE TO SELF: There was a reason why the int breakPoint was there, but I can't remember what it is.
-  I'm going to comment it out for now, in case I remember.
 */
 char ** splitString(char * inString)
 {
@@ -111,30 +108,53 @@ char * getSourceName(char * input)
 char * getTimestamp(char * input)
 {
 	char * timestamp = NULL;
-	int i;
-	int a = 0;
-	int b = 0;
+	char * ptr;
 
-	for(i = 0; i < strlen(input); i++)
+	if ((ptr = strstr(input, ":\x01PING")) != NULL)
 	{
-		if (input[i] == ':')
-		{
-			a = i;
-			i++;
-		}
-		else if (input[i] == '\x01')
-		{
-			b = i;
-		}
-		if (a != 0 && b != 0)
-		{
-			timestamp = strndup(&input[a], b-a+1);
-		}
+		timestamp = strndup(ptr, 100);
 	}
 
 	return timestamp;
 }
-/*char * setMsg(msg, )
+
+char * serverPingCheck(char * input)
+{
+	char * pingMsg = NULL;
+	char * ptr;
+
+	if((ptr = strstr(input, "PING :"))!= NULL)
+	{
+		pingMsg = malloc(sizeof(char) * (strlen(ptr) + 2));
+		strcpy(pingMsg, ptr);
+		strcat(pingMsg, "\r\n");
+		pingMsg[1] = 'O';
+	}
+
+	return pingMsg;
+}
+
+/*FINISH ME!*/
+char * userPingCheck(char * input)
 {
 
-}*/
+	return NULL;
+}
+
+char * createPingResp(char * name, char * timestamp)
+{
+	char * pingResp = NULL;
+
+	if (name != NULL && timestamp != NULL)
+	{
+		pingResp = malloc(sizeof(char) * (strlen(name) + (strlen(timestamp) + strlen("NOTICE  \r\n"))));
+		sprintf(pingResp, "NOTICE %s %s\r\n", name, timestamp);
+	}
+
+	return pingResp;
+}
+
+/*For future!
+  Consider adding a "containString" function.
+  This function would check if a given string contained a second given string.
+*/
