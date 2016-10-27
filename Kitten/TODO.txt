@@ -1,7 +1,9 @@
 Things this bot needs to do before a 'release' build.
 
-Priority: Move bot config to a file in assets folder. Doing it by command line is dumb with the number of settings I'm doing/it's more convenient.
+Priority: Finish linked list implementation for responses.txt. The general idea is each line will be it's own node in the linked list.
+          Each command in the line will be put into an array in the linked list, and the arrays will be read from during run time.
 
+Low Priority: Move bot config to a file in assets folder. Doing it by command line is dumb with the number of settings I'm doing/it's more convenient.
 Low Priority: Clean up main. It looks alright, but could be better.
 Low Priority: Clean up how bot responds to pings from users. Right now it'll probably just respond to every ping senty to everyone from anyone
               So it should check the ping is actually meant for it.
@@ -29,3 +31,10 @@ One: Let's do some motha fuckin machine learning. Ima make a chat bot.
 Two: Implement "meowspeak". The bot should take input string from a user in a channel and parrot it in "meowspeak". Basically adding nyas and stuff.
 
 Potentially impossible goal: Swear less. I'll give it a fuckin shot.
+
+WHAT I WAS DOING LAST TIME.
+I was working in parsing.c on the function parseIntoNode.
+The function takes in a string and splits it up, basically the function will set flags based on what is brought in. If the LISTENFOR flag, for instance,
+is set, a subsequent string in quotations ("Like This") will be parsed into that particular section of the linked list. The linked list is probably
+going to need flags so future parts will work better.
+

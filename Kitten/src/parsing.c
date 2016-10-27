@@ -1,4 +1,5 @@
 #include "parsing.h"
+#include "linkedList.h"
 
 /*Function: splitString
   Expects: char*
@@ -67,8 +68,18 @@ char * cleanMessage(char * input)
 	return NULL;
 }
 
-/*Gets the name of whoever sent some message
-  Note to self: Write better comment later*/
+/*Function: getSourceName
+  Expects: char*
+  Returns: char*
+  
+  This function takes a string as input, and finds the name of
+  whatever sent it. This could be the name of either the server
+  or the name of another user. The function will look through
+  a provided string, and on the first instance of either a '!'
+  or ' ', exit the loop. Messages from the server will have 
+  a space after the name, messages from users will have an '!'
+  sepperating their nick name and real name.  
+*/
 char * getSourceName(char * input)
 {
 	int i;
@@ -103,8 +114,17 @@ char * getSourceName(char * input)
 	return name;
 }
 
-/*Gets timestamp from a ping sent by user
-  NOTE TO SELF write better comment.*/
+/*Function: getTimeStamp
+  Expects: char*
+  Returns: char*
+
+  This function looks through a given string for a timestamp,
+  copies the timestamp and returns it. A timestamp will have the
+  form ':\x01PING TIMESTAMP\x01'. The function looks for a 
+  ':\x01PING', and copies the remainder of the string.
+  It should be noted, the timestamp can be pretty much anything,
+  so extra lengths should be taken to avoid buffer overflows.
+*/
 char * getTimestamp(char * input)
 {
 	char * timestamp = NULL;
@@ -118,6 +138,17 @@ char * getTimestamp(char * input)
 	return timestamp;
 }
 
+/*Function: serverPingCheck
+  Expects: char*
+  Returns: char* on success,
+           NULL otherwise.
+
+  This function checks a given string for a ping from a server.
+  If a ping from the server is found, the function returns an
+  appropriate PONG response to send back to the server. Otherwise
+  it returns NULL.
+
+*/
 char * serverPingCheck(char * input)
 {
 	char * pingMsg = NULL;
@@ -134,13 +165,25 @@ char * serverPingCheck(char * input)
 	return pingMsg;
 }
 
-/*FINISH ME!*/
-char * userPingCheck(char * input)
+/*FINISH ME!
+  Note to self:
+  Can't remember what this function is for,
+  leave out for now.*/
+/*char * userPingCheck(char * input)
 {
 
 	return NULL;
-}
+}*/
 
+/*Function: createPingResp
+  Expects: char* and char*
+  Returns: char* on success
+           NULL otherwise.
+
+  This function creates a ping response message if a ping from
+  another user was recieved. If neither argument is NULL, a ping
+  response is created, otherwise NULL is returned.
+*/
 char * createPingResp(char * name, char * timestamp)
 {
 	char * pingResp = NULL;
@@ -154,7 +197,169 @@ char * createPingResp(char * name, char * timestamp)
 	return pingResp;
 }
 
-/*For future!
-  Consider adding a "containString" function.
-  This function would check if a given string contained a second given string.
-*/
+/*Does a thing*/
+botMsg * parseIntoNode(char * input)
+{
+	int listenForF = 0;
+	int responseF = 0;
+	int repeatF = 0;
+	int targetF = 0;
+	int i;
+	int keepLooping = 1;
+	char * token = NULL;
+	char * toCopy;
+
+	botMsg * newMsg;
+	newMsg = malloc(sizeof(/*struct */botMsg));
+
+	token = strtok(input, " ");
+	if (strncmp(token, "#", 1) == 0) token = NULL;
+	while(token != NULL)
+	{
+		setFlags(&listenForF, &responseF, &repeatF, &targetF, token);
+		if (listenForF == 1)
+		{
+			//token = strotk(NULL, "\"");
+			i = 0;
+			keepLooping = 1;
+			while(keepLooping == 1)
+			{
+				if(newMsg->listenFor[i] != NULL)
+				{
+					toCopy = getQuotedString(token);
+					newMsg->listenFor[i] = malloc(sizeof(char)*strnlen(toCopy, 1000));
+					strncpy(newMsg->listenFor[i], toCopy, 1000);
+					
+					keepLooping = 0;
+				}
+				if(i == 9) keepLooping = 0;
+				i++;
+			}
+		}
+		else if (responseF == 1)
+		{
+			keepLooping = 1;
+			while(keepLooping == 1)
+			{
+				if(newMsg->response[i] != NULL)
+				{
+					toCopy = getQuotedString(token);
+					newMsg->response[i] = malloc(sizeof(char)*strnlen(toCopy, 1000));
+					strncpy(newMsg->response[i], toCopy, 1000);
+
+					keepLooping = 0;
+				}
+				if(i == 9) keepLooping = 0;
+				i++;
+			}
+		}
+		else if (repeatF == 1)
+		{
+			keepLooping = 1;
+			while(keepLooping == 1)
+			{
+				if(newMsg->repeat[i] != NULL)
+				{
+					toCopy = getQuotedString(token);
+					newMsg->repeat[i] = malloc(sizeof(char)*strnlen(toCopy, 1000));
+					strncpy(newMsg->repeat[i], toCopy, 1000);
+
+					keepLooping = 0;
+				}
+			}
+			if(i == 9) keepLooping = 0;
+			i++;
+		}
+		else if (targetF == 1)
+		{
+			keepLooping = 1;
+			while(keepLooping == 1)
+			{
+				if(newMsg->repeat[i] != NULL)
+				{
+					toCopy = getQuotedString(token);
+					newMsg->repeat[i] = malloc(sizeof(char)*strnlen(toCopy, 1000));
+					strncpy(newMsg->repeat[i], toCopy, 1000);
+
+					keepLooping = 0;
+				}
+			}
+			if(i == 9) keepLooping = 0;
+			i++;
+		}
+		token = strtok(NULL, " ");
+	}
+	return newMsg;
+}
+
+/*Add comments later*/
+void setFlags(int * flag1, int * flag2, int * flag3, int * flag4, char * token)
+{
+		if(strncmp(token, "LISTENFOR", 9) == 0)
+		{
+			*flag1 = 1;
+			*flag2 = 0;
+			*flag3 = 0;
+			*flag4 = 0;
+		}
+		else if(strncmp(token, "RESPOND", 7) == 0)
+		{
+			*flag1 = 0;
+			*flag2 = 1;
+			*flag3 = 0;
+			*flag4 = 0;
+		}
+		else if (strncmp(token, "REPEAT", 6) == 0)
+		{
+			*flag1 = 0;
+			*flag2 = 0;
+			*flag3 = 1;
+			*flag4 = 0;
+		}
+		else if (strncmp(token, "TARGET", 6) == 0)
+		{
+			*flag1 = 0;
+			*flag2 = 0;
+			*flag3 = 0;
+			*flag4 = 1;
+		}
+		/*else if (strncmp(token, "#", 1) == 0)
+		{
+		
+		}*/
+
+}
+
+/*A comment goes here*/
+char * getQuotedString(char * input)
+{
+	int i;
+	int counter = 0;
+	char * start = NULL;
+	char * end = NULL;
+	char * quotedString = NULL;
+
+	if (input != NULL && strnlen(input, 255) > 0)
+	{
+		for(i = 0; i < strnlen(input, 255); i++)
+		{
+			if (start == NULL && input[i] == '\"')
+			{
+				counter = 0;
+				start = &input[i];
+			}
+			else if (end == NULL && input[i] == '\"')
+			{
+				end = &input[i];
+			}
+			else if (end != NULL && start != NULL)
+			{
+				quotedString = malloc(sizeof(char)*(counter));
+				strncpy(quotedString, start, counter);
+			}
+			counter++;
+		}
+	}
+	return quotedString;
+}
+

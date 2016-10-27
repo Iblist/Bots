@@ -1,5 +1,6 @@
 #include "mainBot.h"
 
+//I can't remember why this is here
 void error(char * errorMessage)
 {
     perror(errorMessage);
@@ -101,6 +102,7 @@ int main(int argc, char * argv[])
 					write(sockFeed, settings->joinMsg, strlen(settings->joinMsg));
 				}
 
+				//Ping response to server.
 				if (pongResp != NULL)
 				{
 					write(sockFeed, pongResp, strlen(pongResp));
@@ -109,6 +111,7 @@ int main(int argc, char * argv[])
 					pongResp = NULL;
 				}
 
+				//Ping response to user.
 				pongResp = createPingResp(name, timestamp);
 				if (pongResp != NULL)
 				{

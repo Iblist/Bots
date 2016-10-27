@@ -10,7 +10,9 @@
 #include <arpa/inet.h>
 #include <unistd.h>
 #include <time.h>
+#include "linkedList.h"
 #include "parsing.h"
 #include "botAssets.h"
+#include "fileIO.h"
 
 #endif //MAINBOT_H

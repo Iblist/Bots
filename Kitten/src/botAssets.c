@@ -1,5 +1,4 @@
 #include "botAssets.h"
-#include "parsing.h"
 
 /*Function: createBot
   Expects: int, char**
@@ -16,6 +15,8 @@ Bot * createBot(int argc, char * argv[])
 {
 	int i;
 	Bot * tempBot;
+	char * input;
+	FILE * filePtr;
 
 	tempBot = malloc(sizeof(Bot));
 
@@ -24,7 +25,8 @@ Bot * createBot(int argc, char * argv[])
 		tempBot->inChannel = 0;
 		tempBot->inServer = 0;
 		tempBot->quitMsg = strdup("QUIT :Tah Tah for now \r\n");
-		tempBot->passResp = strdup("PASS DoobyDoo\r\n");
+		tempBot->passResp = strdup("PASS herpDerp\r\n");
+		tempBot->list = NULL;
 
 		tempBot->joinMsg = malloc(sizeof(char) * (strlen("JOIN \r\n") + strlen(argv[3])));
 		sprintf(tempBot->joinMsg, "JOIN %s\r\n", argv[3]);
@@ -58,14 +60,41 @@ Bot * createBot(int argc, char * argv[])
 					sprintf(tempBot->userResp, "USER %s 0 0 :%s\r\n", argv[i+1], argv[i+1]);
 				}
 			}
+			if (strncmp(argv[i], "--responses", 11) == 0)
+			{
+				if (i+1 > argc)
+				{
+					fprintf(stderr, "Not enough arguments for --responses\n");
+					exit(1);
+				}
+				else
+				{
+					filePtr = fopen(argv[i+1], "r");
+					while((fgets(input, 255, filePtr)) != NULL)
+					{
+						
+					}
+				}
+			}
 		}
 	}
 	return tempBot;
 }
 
-/*Error codes:
+/*Function: checkBotState
+  Expects: Bot* and char*
+  Returns: int,
   0 = Bot State unchanged
   1 = Bot State changed
+
+  This function checks input recieved from the server and if certain
+  keywords are found, changes the state of the bot. If the function
+  finds "/MOTD", the bot recieved a MOTD command from the server,
+  and it can be assumed the bot has successfully authenticated with
+  the server.
+  If the function finds "NAMES", the bot recieved a list of all users
+  in a channel, and it can be assumed the bot successfully connected to
+  the channel.
 */
 int checkBotState(Bot * botState, char * inString)
 {
@@ -91,3 +120,5 @@ int checkBotState(Bot * botState, char * inString)
 
 	return status;
 }
+
+
