@@ -15,8 +15,9 @@ Bot * createBot(int argc, char * argv[])
 {
 	int i;
 	Bot * tempBot;
-	char * input;
-	FILE * filePtr;
+	//char * input;
+	//FILE * filePtr;
+	char ** responses;
 
 	tempBot = malloc(sizeof(Bot));
 
@@ -30,6 +31,7 @@ Bot * createBot(int argc, char * argv[])
 
 		tempBot->joinMsg = malloc(sizeof(char) * (strlen("JOIN \r\n") + strlen(argv[3])));
 		sprintf(tempBot->joinMsg, "JOIN %s\r\n", argv[3]);
+		tempBot->channelName = strndup(argv[3], 64);
 
 		for (i = 4; i < argc; i++)
 		{
@@ -62,19 +64,17 @@ Bot * createBot(int argc, char * argv[])
 			}
 			if (strncmp(argv[i], "--responses", 11) == 0)
 			{
-				if (i+1 > argc)
+				/*if (i+1 > argc)
 				{
 					fprintf(stderr, "Not enough arguments for --responses\n");
 					exit(1);
 				}
 				else
 				{
-					filePtr = fopen(argv[i+1], "r");
-					while((fgets(input, 255, filePtr)) != NULL)
-					{
-						
-					}
-				}
+					responses = readResponses();
+				}*/
+				responses = readResponses();
+				tempBot->list = addResponses(responses);
 			}
 		}
 	}
@@ -118,7 +118,59 @@ int checkBotState(Bot * botState, char * inString)
 		}
 	}
 
-	return status;
+	return status; 
+}
+
+/******************
+LEFT OFF HERE
+I have no idea what I'm doing.
+The idea is to create nodes to put into the linked list,
+but I'm getting all messed up.
+Create List, Create Node, Put Node into List, Return List.
+Something like that
+********************/
+root * addResponses(char ** responses)
+{
+	root * newList = NULL;
+	botMsg * newMessage;
+	int i = 0;
+	if(responses != NULL)
+	{
+		newList = createList();
+		while(responses[i] != NULL)
+		{
+			newMessage = createNode();
+			newMessage = parseIntoNode(newMessage, responses[i]);
+			push(newList, newMessage);
+			i++;
+		}
+	}
+	return newList;
+}
+
+void checkAndRespond(char * check, int socket, Bot * theBot)
+{
+	//int i = 0;
+	botMsg * conductor;
+	char * message = NULL;
+	int length;
+
+	if (check != NULL && theBot != NULL && theBot->list != NULL && theBot->list->head != NULL)
+	{
+		conductor = theBot->list->head;
+		while(conductor != NULL)
+		{
+			if(conductor->listenFor[0] != NULL && strstr(check, conductor->listenFor[0]) != NULL)
+			{
+				length = strlen("PRIVMSG :\n\r") + strlen(theBot->channelName) + strlen(conductor->response[0]);
+				message = malloc(sizeof(char) * length + 1);
+				snprintf(message, length + 1, "PRIVMSG %s :%s\n\r", theBot->channelName, conductor->response[0]);
+				write(socket, message, strlen(message));
+				//fflush(socket);
+			}
+			conductor = conductor->next;
+		}
+	}	
 }
 
 

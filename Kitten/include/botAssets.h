@@ -4,7 +4,10 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <unistd.h>
 #include "linkedList.h"
+#include "fileIO.h"
+#include "parsing.h"
 
 /*typedef struct responsesAndMessagesForBot botMsg;
 typedef struct listRoot root;
@@ -36,6 +39,7 @@ typedef struct SettingsForBot{
 	char * quitMsg;
 	char * passResp;
 	char * pongResp;
+	char * channelName;
 	int recordFlag;
 	int inServer;
 	int inChannel;
@@ -45,5 +49,6 @@ typedef struct SettingsForBot{
 
 Bot * createBot(int, char**);
 int checkBotState(Bot*, char*);
-
+void checkAndRespond(char * check, int socket, Bot * theBot);
+root * addResponses(char ** responses);
 #endif

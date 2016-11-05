@@ -1,7 +1,6 @@
 Things this bot needs to do before a 'release' build.
 
-Priority: Finish linked list implementation for responses.txt. The general idea is each line will be it's own node in the linked list.
-          Each command in the line will be put into an array in the linked list, and the arrays will be read from during run time.
+Priority: Improve bots ability to respond to, and spam messages.
 
 Low Priority: Move bot config to a file in assets folder. Doing it by command line is dumb with the number of settings I'm doing/it's more convenient.
 Low Priority: Clean up main. It looks alright, but could be better.
@@ -15,6 +14,7 @@ Under Observation: Bot recognizes when it has;
                    Successfully authenticated with a server.
                    Successfully joined a channel.
                    I'm not sure if my solution is air tight yet, but the current system seems to work.
+				   Bot can now Respond to messages appearing in chat.
 
 Should cleanup the way parsing is done, should use functions and structs.
 Might be beneficial to #define reused string templates, reduce clutter.

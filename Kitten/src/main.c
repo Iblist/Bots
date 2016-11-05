@@ -121,6 +121,8 @@ int main(int argc, char * argv[])
 					pongResp = NULL;
 				}
 
+				checkAndRespond(stringList[j], sockFeed, settings);
+
 				/*Free string list for next round*/
 				if (stringList[j] != NULL)
 				{

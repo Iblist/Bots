@@ -197,98 +197,81 @@ char * createPingResp(char * name, char * timestamp)
 	return pingResp;
 }
 
-/*Does a thing*/
-botMsg * parseIntoNode(char * input)
+/*This function is causing things to break, not sure why.*/
+botMsg * parseIntoNode(botMsg * newMsg, char * input)
 {
 	int listenForF = 0;
+	int listenForC = 0;
 	int responseF = 0;
+	int responseC = 0;
 	int repeatF = 0;
+	int repeatC = 0;
 	int targetF = 0;
-	int i;
-	int keepLooping = 1;
+	int targetC = 0;
+	//int keepLooping = 1;
 	char * token = NULL;
-	char * toCopy;
+	//char * toCopy;
+	//char * fullInput;
 
-	botMsg * newMsg;
-	newMsg = malloc(sizeof(/*struct */botMsg));
+	//fullInput = strdup(input);
 
 	token = strtok(input, " ");
-	if (strncmp(token, "#", 1) == 0) token = NULL;
+	//if (strncmp(token, "#", 1) == 0) token = NULL;
 	while(token != NULL)
 	{
 		setFlags(&listenForF, &responseF, &repeatF, &targetF, token);
 		if (listenForF == 1)
 		{
 			//token = strotk(NULL, "\"");
-			i = 0;
-			keepLooping = 1;
-			while(keepLooping == 1)
+			token = strtok(NULL, "\"");
+			if(newMsg->listenFor[listenForC] == NULL)
 			{
-				if(newMsg->listenFor[i] != NULL)
-				{
-					toCopy = getQuotedString(token);
-					newMsg->listenFor[i] = malloc(sizeof(char)*strnlen(toCopy, 1000));
-					strncpy(newMsg->listenFor[i], toCopy, 1000);
-					
-					keepLooping = 0;
-				}
-				if(i == 9) keepLooping = 0;
-				i++;
+				//toCopy = getQuotedString(token);
+				newMsg->listenFor[listenForC] = malloc(sizeof(char)* 100/*strnlen(token, 64)*/);
+				//token[3] = '\0';
+				strncpy(newMsg->listenFor[listenForC], token, 50);
+				listenForC++;
 			}
+			
 		}
 		else if (responseF == 1)
 		{
-			keepLooping = 1;
-			while(keepLooping == 1)
+			if(newMsg->response[responseC] == NULL)
 			{
-				if(newMsg->response[i] != NULL)
-				{
-					toCopy = getQuotedString(token);
-					newMsg->response[i] = malloc(sizeof(char)*strnlen(toCopy, 1000));
-					strncpy(newMsg->response[i], toCopy, 1000);
+				token = strtok(NULL, "\"");
+				//toCopy = getQuotedString(token);
+				newMsg->response[responseC] = malloc(sizeof(char)*100 /*strnlen(token, 64)*/);
+				strncpy(newMsg->response[responseC], token, 50);
 
-					keepLooping = 0;
-				}
-				if(i == 9) keepLooping = 0;
-				i++;
+				responseC++;
 			}
 		}
 		else if (repeatF == 1)
 		{
-			keepLooping = 1;
-			while(keepLooping == 1)
-			{
-				if(newMsg->repeat[i] != NULL)
-				{
-					toCopy = getQuotedString(token);
-					newMsg->repeat[i] = malloc(sizeof(char)*strnlen(toCopy, 1000));
-					strncpy(newMsg->repeat[i], toCopy, 1000);
 
-					keepLooping = 0;
-				}
+			if(newMsg->repeat[repeatC] == NULL)
+			{
+				token = strtok(NULL, "\"");
+				//toCopy = getQuotedString(token);
+				newMsg->repeat[repeatC] = malloc(sizeof(char)*strnlen(token, 64));
+				strncpy(newMsg->repeat[repeatC], token, 50);
+				repeatC++;
 			}
-			if(i == 9) keepLooping = 0;
-			i++;
 		}
 		else if (targetF == 1)
 		{
-			keepLooping = 1;
-			while(keepLooping == 1)
+			if(newMsg->repeat[targetC] == NULL)
 			{
-				if(newMsg->repeat[i] != NULL)
-				{
-					toCopy = getQuotedString(token);
-					newMsg->repeat[i] = malloc(sizeof(char)*strnlen(toCopy, 1000));
-					strncpy(newMsg->repeat[i], toCopy, 1000);
-
-					keepLooping = 0;
-				}
+				token = strtok(NULL, "\"");
+				//toCopy = getQuotedString(token);
+				newMsg->repeat[targetC] = malloc(sizeof(char)*strnlen(token, 64));
+				strncpy(newMsg->repeat[targetC], token, 50);
+				targetC++;
 			}
-			if(i == 9) keepLooping = 0;
-			i++;
 		}
 		token = strtok(NULL, " ");
 	}
+	//free(fullInput);
 	return newMsg;
 }
 
@@ -323,6 +306,13 @@ void setFlags(int * flag1, int * flag2, int * flag3, int * flag4, char * token)
 			*flag3 = 0;
 			*flag4 = 1;
 		}
+		else
+		{
+			*flag1 = 0;
+			*flag2 = 0;
+			*flag3 = 0;
+			*flag4 = 0;
+		}
 		/*else if (strncmp(token, "#", 1) == 0)
 		{
 		
@@ -354,8 +344,9 @@ char * getQuotedString(char * input)
 			}
 			else if (end != NULL && start != NULL)
 			{
-				quotedString = malloc(sizeof(char)*(counter));
+				quotedString = malloc(sizeof(char)*(counter)); //Error here
 				strncpy(quotedString, start, counter);
+				i = strnlen(input, 255);
 			}
 			counter++;
 		}
